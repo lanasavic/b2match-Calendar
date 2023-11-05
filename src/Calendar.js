@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DateTime } from 'luxon';
 import './Calendar.css';
 import {ReactComponent as ArrowLeft} from './ArrowLeft.svg';
 import {ReactComponent as ArrowRight} from './ArrowRight.svg';
-import {ReactComponent as Accept} from './Accept.svg';
 
 function Calendar() {
     const [currentDate, setCurrentDate] = useState(DateTime.local());
@@ -15,20 +14,20 @@ function Calendar() {
     const [selectedMonth, setSelectedMonth] = useState(currentDate.month);
     const [selectedYear, setSelectedYear] = useState(currentDate.year);
     
-    // Function to switch to the selected month and year
-    const switchToMonthYear = () => {
-        const newDate = DateTime.local(selectedYear, selectedMonth, 1);
-        setCurrentDate(newDate);
-        setShowDropdown(false);
+    useEffect(() => {
+        setCurrentDate(DateTime.local(selectedYear, selectedMonth, 1));
+    }, [selectedYear, selectedMonth]);
+
+   const goToPreviousMonth = () => {
+    setCurrentDate((prevDate) => prevDate.minus({ months: 1 }));
+    setSelectedMonth(currentDate.minus({ months: 1 }).month);
+    setSelectedYear(currentDate.minus({ months: 1 }).year);
     };
-    
-    // Function to switch to the previous month
-    const goToPreviousMonth = () => {
-        setCurrentDate(currentDate.minus({ months: 1 }));
-    };
-    // Function to switch to the next month
+
     const goToNextMonth = () => {
-        setCurrentDate(currentDate.plus({ months: 1 }));
+        setCurrentDate((prevDate) => prevDate.plus({ months: 1 }));
+        setSelectedMonth(currentDate.plus({ months: 1 }).month);
+        setSelectedYear(currentDate.plus({ months: 1 }).year);
     };
 
     // Simulated event data
@@ -72,7 +71,6 @@ function Calendar() {
                     type="number"
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(Number(e.target.value))}/>
-                <button onClick={switchToMonthYear}><Accept className='btnSvg'/></button>
             </div>
             
             <div className="calendar-header-buttons">
