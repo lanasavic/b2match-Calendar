@@ -1,0 +1,114 @@
+/*
+TEXT: #0B9A9A
+BACKGROUND: #E5F6F6
+BORDER/SHADOW: #E4E5E5
+                #EAE9E9
+*/
+
+.calendar {
+    margin: 0.35em;
+    padding: 0.6em;
+}
+
+.calendar-header {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    display: flow-root;
+}
+
+.calendar-dropdown {
+    float: left;
+    margin-left: 0.15em;
+    color: #000000;
+    cursor: pointer;
+    text-align: left;
+}
+
+.calendar-header-buttons {
+    float: right;
+}
+
+.unset {
+    all: unset;
+
+    border: 1px solid #EAE9E9;
+    border-radius: 10px;
+    margin: 0px 2px;
+    padding: 5px;
+    background: none;
+    width: 10%;
+    text-align: center;
+}
+
+.select {
+    cursor: pointer;
+    min-width: 30%;
+}
+
+.input {
+    min-width: 20%;
+}
+
+.btnSvg{
+    height: 1rem;
+    width: 1rem;
+}
+
+button{
+    background: none;
+    border: 1px solid #EAE9E9;
+    border-radius: 10px;
+    width: 30px;
+    height: 30px;
+    margin: 0px 2px;
+    cursor: pointer;
+}
+
+.calendar-day-names, .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #E4E5E5;
+    border-radius: 10px;
+    background-color: #e5f6f680;
+}
+.calendar-day-names{
+    background-color: #e5f6f6 !important;
+}
+
+.calendar-day {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #E4E5E5;
+    border-radius: 10px;
+    background-color: #ffffff;
+    padding: 5px;
+    cursor: pointer;
+    min-height: 100px;
+}
+
+.day-number {
+    font-size: 1rem;
+    color: #000000;
+    text-align: right;
+    padding: 0.35em 0.35em 0em 0em;
+}
+
+.event-list {
+    list-style: none;
+    padding: 0em;
+    text-align: center;
+    background: #EAE9E9;
+    border-radius: 5px;
+}
+
+.event-list li {
+    font-size: 0.8rem;
+    margin: 0.35em 0;
+}
+
+.event-title {
+    font-weight: bold;
+}
