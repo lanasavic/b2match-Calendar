@@ -10,7 +10,6 @@ function Calendar() {
     const daysInMonth = currentDate.daysInMonth;
 
     // State to manage the dropdown visibility and selected month and year
-    const [showDropdown, setShowDropdown] = useState(false);
     const [selectedMonth, setSelectedMonth] = useState(currentDate.month);
     const [selectedYear, setSelectedYear] = useState(currentDate.year);
     
@@ -18,10 +17,10 @@ function Calendar() {
         setCurrentDate(DateTime.local(selectedYear, selectedMonth, 1));
     }, [selectedYear, selectedMonth]);
 
-   const goToPreviousMonth = () => {
-    setCurrentDate((prevDate) => prevDate.minus({ months: 1 }));
-    setSelectedMonth(currentDate.minus({ months: 1 }).month);
-    setSelectedYear(currentDate.minus({ months: 1 }).year);
+    const goToPreviousMonth = () => {
+        setCurrentDate((prevDate) => prevDate.minus({ months: 1 }));
+        setSelectedMonth(currentDate.minus({ months: 1 }).month);
+        setSelectedYear(currentDate.minus({ months: 1 }).year);
     };
 
     const goToNextMonth = () => {
