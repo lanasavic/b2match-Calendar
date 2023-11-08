@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 import './Calendar.css';
 import { ReactComponent as ArrowLeft } from './ArrowLeft.svg';
 import { ReactComponent as ArrowRight } from './ArrowRight.svg';
+import EventDetails from './EventDetails';
 
 function Calendar() {
     const [currentDate, setCurrentDate] = useState(DateTime.local());
@@ -13,6 +14,7 @@ function Calendar() {
     const [selectedMonth, setSelectedMonth] = useState(currentDate.month);
     const [selectedYear, setSelectedYear] = useState(currentDate.year);
     const [eventsData, setEventsData] = useState([]);
+    const [openEventId, setOpenEventId] = useState(null);
 
     useEffect(() => {
         setCurrentDate(DateTime.local(selectedYear, selectedMonth, 1));
@@ -31,65 +33,44 @@ function Calendar() {
     };
 
     useEffect(() => {
-    // GitHub personal access token
-    const accessToken = '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';
+    // GitHub personal access token - disabled once code is uploaded to GitHub
+    const accessToken = '';
 
     // GitHub repository information
     const owner = 'lanasavic';
     const repo = 'b2match-Calendar';
-    const branch = 'events';
 
-    // GitHub API endpoint to fetch commits from a branch and data from 'events.json' file in GitHub repository
-    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/commits?sha=${branch}`;
-    const eventsFileUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/events.json`;
+    // GitHub API endpoint to fetch commits
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/commits`;
 
     // Make an authenticated GET request to the GitHub API
     fetch(apiUrl, {
             headers: {
-            Authorization: `token ${accessToken}`,
-        },
-    })
-    .then((response) => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error(`Failed to fetch data: ${response.status} - ${response.statusText}`);
-        }
-    })
-    .then((commits) => {
-        console.clear();
-        
-        // Process and display commit data in calendar
-        commits.forEach((commit) => {
-            const commitMessage = commit.commit.message;
-            const commitAuthor = commit.commit.author.name;
-            const commitTimestamp = commit.commit.author.date;
-            
-            // Display this commit data in calendar as an event
-            console.log(`--- Message: ${commitMessage}`);
-            console.log(`Author: ${commitAuthor}`);
-            console.log(`Timestamp: ${commitTimestamp} ---`);
-        });
-    })
-    .catch((error) => {
-        console.error('Error fetching commits:', error);
-    });
-    
-    // Fetch and parse the 'events.json' file.
-    fetch(eventsFileUrl)
+                Authorization: `token ${accessToken}`,
+            },
+        })
         .then((response) => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error(`Failed to fetch 'events.json': ${response.status} - ${response.statusText}`);
-        }})
-        .then((eventsData) => {
-            setEventsData(eventsData);
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error(`Failed to fetch data: ${response.status} - ${response.statusText}`);
+            }
+        })
+        .then((commits) => {
+            // Process and store commits as events in state
+            setEventsData(commits.map((commit) => ({
+                id: commit.sha,
+                date: DateTime.fromISO(commit.commit.author.date).toISODate(), // Format the date
+                time: DateTime.fromISO(commit.commit.author.date).toFormat('HH:mm'), // Format the time
+                title: commit.commit.message, // Use commit message as event title
+                author: commit.commit.author.name, // Use author's name
+                username: commit.author.login, // Use author's name
+            })));
         })
         .catch((error) => {
-            console.error('Error fetching events:', error);
+            console.error('Error fetching commits:', error);
         });
-    }, [selectedYear, selectedMonth]);
+    });
 
     // Function to filter events for a specific date
     const getEventsForDate = (date) => eventsData.filter((event) => event.date === date.toISODate());
@@ -105,7 +86,7 @@ function Calendar() {
     for (let day = 1; day <= daysInMonth; day++) {
         dayNames.push(day);
     }
-
+    
     return (
     <div className="calendar">
         <div className="calendar-header">
@@ -130,10 +111,10 @@ function Calendar() {
 
             <div className="calendar-header-buttons">
                 <button onClick={goToPreviousMonth}>
-                <ArrowLeft className="btnSvg" />
+                    <ArrowLeft className="btnSvg" />
                 </button>
                 <button onClick={goToNextMonth}>
-                <ArrowRight className="btnSvg" />
+                    <ArrowRight className="btnSvg" />
                 </button>
             </div>
         </div>
@@ -157,16 +138,38 @@ function Calendar() {
                 return (
                 <div key={day} className="calendar-day">
                     <div className="day-number">{date.day}</div>
-                    <ul className="event-list">
-                    {dayEvents.map((event, index) => (
-                        <li key={index}>
-                            <div className="event-title">{event.title}</div>
-                            <div className="event-time">
-                                {event.time_from} - {event.time_to}
-                            </div>
-                        </li>
-                    ))}
-                    </ul>
+                    <div className="day-events">
+                        <ul className="event-list">
+                            {dayEvents
+                            .slice() // Create a copy of the array to avoid modifying the original
+                            .sort((eventA, eventB) => {
+                                // Compare the time of the two events
+                                const timeA = eventA.time;
+                                const timeB = eventB.time;
+                                return timeA.localeCompare(timeB);
+                            })
+                            .map((event) => (
+                                <li key={event.id} onClick={() => {
+                                    if (openEventId === event.id) {
+                                        // If the clicked event is the currently open one, close it
+                                        setOpenEventId(null);
+                                    } else {
+                                        // If it's a different event, open its details
+                                        setOpenEventId(event.id);
+                                    }
+                                }}>
+                                    <div className="event-title">{event.title}</div>
+                                    <div className="event-time">{event.time}</div>
+                                    {openEventId === event.id && (
+                                        <EventDetails
+                                            event={eventsData.find((e) => e.id === event.id)}
+                                            onClose={() => setOpenEventId(null)} // Close the selected event
+                                        />
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
                 );
             })}
