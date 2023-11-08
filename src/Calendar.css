@@ -3,23 +3,55 @@ TEXT: #0B9A9A
 BACKGROUND: #E5F6F6
 BORDER/SHADOW: #E4E5E5
                 #EAE9E9
+                #E5F6F680
+0.3125em = 5px
+0.6250em = 10px
+1.875em = 30px
+4.375em = 70px
+7.5 = 120px
+
+FONT:
+0.75rem = 12px
+1rem = 16px
+1.25rem = 20px
+
+[w3docs]
+Use px for small, fixed-size elements like borders or shadows.
+Use em for typography and other scalable elements that need to change size relative to their parent element.
+Use rem for scalable typography and responsive layouts that need to change size relative to the root element.
 */
 
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 0.3125em;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #D0D0D0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #929393C3;
+}
+
 .calendar {
-    margin: 0.35em;
-    padding: 0.6em;
+    margin: 0.3125em;
+    padding: 0.6250em;
 }
 
 .calendar-header {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     font-weight: bold;
-    margin-bottom: 0.5em;
+    margin-bottom: 0.6250em;
     display: flow-root;
 }
 
 .calendar-dropdown {
     float: left;
-    margin-left: 0.15em;
     color: #000000;
     text-align: left;
 }
@@ -32,9 +64,9 @@ BORDER/SHADOW: #E4E5E5
     all: unset;
 
     border: 1px solid #EAE9E9;
-    border-radius: 10px;
+    border-radius: 0.6250em;
     margin: 0px 2px;
-    padding: 5px;
+    padding: 0.3125em;
     background: none;
     width: 10%;
     text-align: center;
@@ -50,16 +82,16 @@ BORDER/SHADOW: #E4E5E5
 }
 
 .btnSvg{
-    height: 1rem;
-    width: 1rem;
+    height: 1em;
+    width: 1em;
 }
 
 button{
     background: none;
     border: 1px solid #EAE9E9;
-    border-radius: 10px;
-    width: 30px;
-    height: 30px;
+    border-radius: 0.6250em;
+    width: 1.875em;
+    height: 1.875em;
     margin: 0px 2px;
     cursor: pointer;
 }
@@ -67,11 +99,11 @@ button{
 .calendar-day-names, .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-    padding: 10px;
-    border: 1px solid #E4E5E5;
-    border-radius: 10px;
-    background-color: #e5f6f680;
+    gap: 0.6250em;
+    padding: 0.6250em;
+    border: 0.063em solid #E4E5E5;
+    border-radius: 0.6250em;
+    background-color: #E5F6F680;
 }
 .calendar-day-names{
     background-color: #e5f6f6 !important;
@@ -81,18 +113,26 @@ button{
     display: flex;
     flex-direction: column;
     border: 1px solid #E4E5E5;
-    border-radius: 10px;
+    border-radius: 0.6250em;
     background-color: #ffffff;
-    padding: 5px;
+    padding: 0.3125em;
     cursor: pointer;
-    min-height: 100px;
+    min-height: 7em; /* 112px */
+    max-height: 7em; /* 112px */
 }
 
 .day-number {
     font-size: 1rem;
     color: #000000;
     text-align: right;
-    padding: 0.35em 0.35em 0em 0em;
+    padding: 0.3125em 0.3125em 0em 0em;
+}
+
+.day-events {
+    flex: 1 1 auto;
+    display: inline-block;
+    margin: 0 auto;
+    padding: 0.3125em;
 }
 
 .event-list {
@@ -100,14 +140,21 @@ button{
     padding: 0em;
     text-align: center;
     background: #EAE9E9;
-    border-radius: 5px;
+    border-radius: 0.3125em;
+    max-height: 4em; /* 64px */
+    overflow-y: auto;
 }
 
 .event-list li {
-    font-size: 0.8rem;
-    margin: 0.35em 0;
+    font-size: 0.75rem;
+    margin: 0.3125em 0;
+    padding: 0.3125em;
 }
 
 .event-title {
     font-weight: bold;
+}
+
+.event-details {
+    font-style: italic;
 }
