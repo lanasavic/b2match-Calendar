@@ -10,11 +10,10 @@ function Calendar() {
     const firstDayOfMonth = currentDate.startOf('month');
     const daysInMonth = currentDate.daysInMonth;
 
-    // State to manage the dropdown visibility and selected month and year
-    const [selectedMonth, setSelectedMonth] = useState(currentDate.month);
-    const [selectedYear, setSelectedYear] = useState(currentDate.year);
-    const [eventsData, setEventsData] = useState([]);
-    const [openEventId, setOpenEventId] = useState(null);
+    const [selectedMonth, setSelectedMonth] = useState(currentDate.month); // State variable to store the currently selected month
+    const [selectedYear, setSelectedYear] = useState(currentDate.year); // State variable to store the currently selected year
+    const [eventsData, setEventsData] = useState([]); // State variable to store the events data
+    const [openEventId, setOpenEventId] = useState(null); // State variable to keep track of the open event ID (or null if no event is open)
 
     useEffect(() => {
         setCurrentDate(DateTime.local(selectedYear, selectedMonth, 1));
@@ -33,18 +32,18 @@ function Calendar() {
     };
 
     useEffect(() => {
-    // GitHub personal access token - disabled once code is uploaded to GitHub
-    const accessToken = '';
+        // GitHub personal access token - disabled if uploaded to GitHub
+        const accessToken = '';
 
-    // GitHub repository information
-    const owner = 'lanasavic';
-    const repo = 'b2match-Calendar';
+        // GitHub repository information
+        const owner = 'lanasavic';
+        const repo = 'b2match-Calendar';
 
-    // GitHub API endpoint to fetch commits
-    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/commits`;
+        // GitHub API endpoint to fetch commits
+        const apiUrl = `https://api.github.com/repos/${owner}/${repo}/commits`;
 
-    // Make an authenticated GET request to the GitHub API
-    fetch(apiUrl, {
+        // Make an authenticated GET request to the GitHub API
+        fetch(apiUrl, {
             headers: {
                 Authorization: `token ${accessToken}`,
             },
@@ -59,12 +58,12 @@ function Calendar() {
         .then((commits) => {
             // Process and store commits as events in state
             setEventsData(commits.map((commit) => ({
-                id: commit.sha,
+                id: commit.sha, // Use SHA of the commit as ID
                 date: DateTime.fromISO(commit.commit.author.date).toISODate(), // Format the date
                 time: DateTime.fromISO(commit.commit.author.date).toFormat('HH:mm'), // Format the time
                 title: commit.commit.message, // Use commit message as event title
                 author: commit.commit.author.name, // Use author's name
-                username: commit.author.login, // Use author's name
+                username: commit.author.login, // Use author's login username
             })));
         })
         .catch((error) => {
@@ -75,15 +74,14 @@ function Calendar() {
     // Function to filter events for a specific date
     const getEventsForDate = (date) => eventsData.filter((event) => event.date === date.toISODate());
 
-    // Create an array of weekday names
     const weekdayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
     // Create an array of day names for calendar headers
     const dayNames = [];
-    for (let i = 1; i < firstDayOfMonth.weekday; i++) {
+    for (let i = 1; i < firstDayOfMonth.weekday; i++) { // Fill leading empty cells with empty strings
         dayNames.push('');
     }
-    for (let day = 1; day <= daysInMonth; day++) {
+    for (let day = 1; day <= daysInMonth; day++) { // Populate with day numbers
         dayNames.push(day);
     }
     
@@ -95,10 +93,9 @@ function Calendar() {
                     className="unset select"
                     value={selectedMonth}
                     onChange={(e) => setSelectedMonth(Number(e.target.value))} >
-
                     {Array.from({ length: 12 }, (_, i) => (
                         <option key={i + 1} value={i + 1}>
-                        {DateTime.local(2023, i + 1, 1).toFormat('MMMM')}
+                        {DateTime.local(new Date().getFullYear(), i + 1, 1).toFormat('MMMM')}
                         </option>
                     ))}
                 </select>
@@ -106,7 +103,8 @@ function Calendar() {
                     className="unset input"
                     type="number"
                     value={selectedYear}
-                    onChange={(e) => setSelectedYear(Number(e.target.value))}/>
+                    onChange={(e) => setSelectedYear(Number(e.target.value))}
+                />
             </div>
 
             <div className="calendar-header-buttons">
@@ -134,7 +132,6 @@ function Calendar() {
                 const date = firstDayOfMonth.set({ day: day });
                 const dayEvents = getEventsForDate(date);
 
-                // Render the events in the calendar
                 return (
                 <div key={day} className="calendar-day">
                     <div className="day-number">{date.day}</div>
@@ -143,7 +140,6 @@ function Calendar() {
                             {dayEvents
                             .slice() // Create a copy of the array to avoid modifying the original
                             .sort((eventA, eventB) => {
-                                // Compare the time of the two events
                                 const timeA = eventA.time;
                                 const timeB = eventB.time;
                                 return timeA.localeCompare(timeB);
